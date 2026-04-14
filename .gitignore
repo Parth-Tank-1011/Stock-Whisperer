@@ -1,0 +1,39 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Logs
+*.log
+*.out
+*.err
+
+# Env files
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Frontend dependencies/build
+frontend/node_modules/
+frontend/dist/
+
+# Runtime storage artifacts
+storage/app.db
+storage/logs/
+storage/meta/
+storage/models/
+storage/yfinance_cache/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/

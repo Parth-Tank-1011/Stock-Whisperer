@@ -1,0 +1,19 @@
+# Local / VPS: single service — UI + API on port 8000
+# Set JWT_SECRET_KEY in a .env file next to this compose file (never commit real secrets).
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      FRONTEND_DIST_DIR: /app/frontend/dist
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-replace-with-long-random-secret}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      DATABASE_URL: ${DATABASE_URL:-sqlite:///./storage/app.db}
+    # Uncomment to persist SQLite + caches across container restarts (overrides image /app/storage).
+    # volumes:
+    #   - sm_storage:/app/storage
+
+# volumes:
+#   sm_storage:
