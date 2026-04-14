@@ -31,17 +31,18 @@ Production-ready backend for Indian stock prediction using Yahoo Finance and a h
 - Alert check endpoint degrades gracefully when quote fetch fails per-symbol
 
 ## Folder Structure
-- `app/main.py` - FastAPI entrypoint
-- `app/routes` - API routes
-- `app/services` - Business logic and ML orchestration
-- `app/models` - Request/response schemas
-- `app/utils` - Shared helper utilities (symbol normalization, formatting)
-- `storage/models` - Saved model and scaler artifacts
-- `storage/meta` - Model training metadata
+- `backend/app/main.py` - FastAPI entrypoint
+- `backend/app/routes` - API routes
+- `backend/app/services` - Business logic and ML orchestration
+- `backend/app/models` - Request/response schemas
+- `backend/app/utils` - Shared helper utilities (symbol normalization, formatting)
+- `backend/storage/models` - Saved model and scaler artifacts
+- `backend/storage/meta` - Model training metadata
 - `frontend` - React UI dashboard
 
 ## Run Backend Locally
 ```bash
+cd backend
 python -m pip install -r requirements.txt
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
@@ -107,7 +108,7 @@ Example response (`/predict/RELIANCE.NS`):
 The image builds the Vite app and serves it from FastAPI when `FRONTEND_DIST_DIR` is set (the Dockerfile sets it to `/app/frontend/dist`).
 
 ```bash
-docker build -t stock-whisperer .
+docker build -f backend/Dockerfile -t stock-whisperer .
 docker run --rm -p 8000:8000 -e JWT_SECRET_KEY="use-a-long-random-secret" stock-whisperer
 ```
 

@@ -65,6 +65,16 @@ def health() -> dict:
     return {"status": "ok", "service": settings.app_name, "version": settings.app_version}
 
 
+@app.get("/")
+def root() -> dict:
+    return {
+        "message": "Stock Whisperer API is running",
+        "docs": "/docs",
+        "health": "/health",
+        "frontend_dev": "http://127.0.0.1:5173",
+    }
+
+
 @app.exception_handler(InputValidationError)
 async def input_validation_handler(_: Request, exc: InputValidationError) -> JSONResponse:
     return JSONResponse(status_code=422, content={"detail": str(exc)})

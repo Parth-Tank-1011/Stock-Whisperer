@@ -3,7 +3,6 @@ import { fetchHistorical, fetchMe, fetchPrediction } from "./api";
 import SymbolForm from "./components/SymbolForm";
 import PredictionCard from "./components/PredictionCard";
 import LiveTicker from "./components/LiveTicker";
-import TradingViewWidget from "./components/TradingViewWidget";
 import PredictionOverlayChart from "./components/PredictionOverlayChart";
 import IndicatorsChart from "./components/IndicatorsChart";
 import AuthPanel from "./components/AuthPanel";
@@ -59,6 +58,12 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [navActive, setNavActive] = useState("command");
+  const [theme, setTheme] = useState(() => localStorage.getItem("sw_theme") || "light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("sw_theme", theme);
+  }, [theme]);
 
   const previousClose = useMemo(() => {
     if (!history.length) {
@@ -124,6 +129,10 @@ export default function App() {
     setUser(null);
   }
 
+  function toggleTheme() {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  }
+
   if (!authChecked) {
     return (
       <div className="sw-root">
@@ -141,6 +150,9 @@ export default function App() {
           <SidebarBrand />
           <div className="sw-sidebar-footer">
             <span className="sw-chip">Secure workspace</span>
+            <button type="button" className="theme-toggle-btn" onClick={toggleTheme}>
+              {theme === "light" ? "Night" : "Light"}
+            </button>
             <p style={{ margin: "12px 0 0", fontSize: "0.82rem", color: "var(--muted)" }}>
               Sign in to sync watchlists, alerts, and saved preferences.
             </p>
@@ -174,6 +186,9 @@ export default function App() {
           <h1>Markets desk</h1>
           <div className="sw-top-actions">
             <span className="sw-pill">Signed in</span>
+            <button type="button" className="theme-toggle-btn" onClick={toggleTheme}>
+              {theme === "light" ? "Night" : "Light"}
+            </button>
             <button type="button" className="logout-btn" onClick={logout}>
               Logout
             </button>
@@ -186,7 +201,7 @@ export default function App() {
               <p className="kicker" style={{ marginBottom: 6 }}>Active symbol</p>
               <p className="sw-hero-symbol">{symbol}</p>
               <p className="sw-hero-tagline">
-                Run a forecast to refresh OHLCV, hybrid models, sentiment from headlines, and TradingView context.
+                Run a forecast to refresh OHLCV, hybrid models, and sentiment from headlines.
               </p>
             </div>
             <div className="sw-hero-meta">
@@ -215,7 +230,6 @@ export default function App() {
         <div id="sw-section-analytics">
           <LiveTicker symbol={symbol} refreshMs={5000} />
           <PredictionCard prediction={prediction} previousClose={previousClose} />
-          <TradingViewWidget symbol={symbol} />
           <PredictionOverlayChart historicalData={history} prediction={prediction} />
           <IndicatorsChart historicalData={history} />
         </div>

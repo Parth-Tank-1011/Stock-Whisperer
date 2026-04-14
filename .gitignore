@@ -22,11 +22,11 @@ frontend/node_modules/
 frontend/dist/
 
 # Runtime storage artifacts
-storage/app.db
-storage/logs/
-storage/meta/
-storage/models/
-storage/yfinance_cache/
+backend/storage/app.db
+backend/storage/logs/
+backend/storage/meta/
+backend/storage/models/
+backend/storage/yfinance_cache/
 
 # Python tooling
 .pytest_cache/

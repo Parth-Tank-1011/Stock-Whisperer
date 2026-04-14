@@ -1,4 +1,26 @@
 :root {
+  --bg: #f4f8ff;
+  --bg-elevated: #ffffff;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-solid: #ffffff;
+  --border: rgba(15, 23, 42, 0.12);
+  --primary: #0ea5e9;
+  --primary-dim: rgba(14, 165, 233, 0.14);
+  --primary-dark: #0284c7;
+  --text: #0f172a;
+  --muted: #475569;
+  --danger: #dc2626;
+  --ring: rgba(14, 165, 233, 0.3);
+  --up: #34d399;
+  --down: #fb7185;
+  --sidebar-w: 248px;
+  --glow: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.15), transparent);
+  --sidebar-bg: linear-gradient(180deg, rgba(240, 249, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+  --tile-bg: rgba(255, 255, 255, 0.92);
+  --hero-gradient: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(59, 130, 246, 0.12) 100%);
+}
+
+:root[data-theme="dark"] {
   --bg: #070b14;
   --bg-elevated: #0c1220;
   --surface: rgba(15, 23, 42, 0.72);
@@ -11,10 +33,10 @@
   --muted: #94a3b8;
   --danger: #f87171;
   --ring: rgba(34, 211, 238, 0.35);
-  --up: #34d399;
-  --down: #fb7185;
-  --sidebar-w: 248px;
   --glow: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.22), transparent);
+  --sidebar-bg: linear-gradient(180deg, rgba(8, 12, 22, 0.96) 0%, rgba(6, 10, 18, 0.98) 100%);
+  --tile-bg: rgba(15, 23, 42, 0.5);
+  --hero-gradient: linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, rgba(15, 23, 42, 0.5) 50%, rgba(99, 102, 241, 0.1) 100%);
 }
 
 * {
@@ -49,7 +71,7 @@ body {
   flex-shrink: 0;
   padding: 20px 14px;
   border-right: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(8, 12, 22, 0.96) 0%, rgba(6, 10, 18, 0.98) 100%);
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -81,7 +103,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  background: linear-gradient(120deg, #f8fafc 0%, #a5f3fc 45%, #67e8f9 100%);
+  background: linear-gradient(120deg, var(--text) 0%, #38bdf8 70%, var(--primary) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -184,9 +206,7 @@ body {
   border-radius: 18px;
   padding: 22px 22px 18px;
   border: 1px solid var(--border);
-  background:
-    linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, rgba(15, 23, 42, 0.5) 50%, rgba(99, 102, 241, 0.1) 100%),
-    var(--surface);
+  background: var(--hero-gradient), var(--surface);
   backdrop-filter: blur(14px);
 }
 
@@ -239,8 +259,8 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, rgba(8, 51, 68, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-  color: #f8fafc;
+  background: linear-gradient(135deg, rgba(186, 230, 253, 0.6) 0%, rgba(255, 255, 255, 0.96) 100%);
+  color: var(--text);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid var(--border);
@@ -264,7 +284,7 @@ header h1 {
 .subtitle {
   margin: 0;
   opacity: 0.88;
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .symbol-form,
@@ -282,7 +302,7 @@ header h1 {
   display: block;
   font-weight: 600;
   margin-bottom: 10px;
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .symbol-controls {
@@ -336,9 +356,9 @@ header h1 {
 }
 
 .error-banner {
-  background: rgba(248, 113, 113, 0.1);
-  color: #fecaca;
-  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.25);
   border-radius: 12px;
   padding: 12px 14px;
 }
@@ -347,7 +367,7 @@ header h1 {
 .chart-card h2 {
   margin-top: 0;
   margin-bottom: 14px;
-  color: #f1f5f9;
+  color: var(--text);
 }
 
 .prediction-grid {
@@ -360,7 +380,7 @@ header h1 {
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--tile-bg);
 }
 
 .prediction-grid span {
@@ -372,7 +392,7 @@ header h1 {
 
 .prediction-grid strong {
   font-size: 1rem;
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .prediction-grid strong.up {
@@ -384,7 +404,7 @@ header h1 {
 }
 
 .prediction-grid strong.flat {
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .subsection {
@@ -394,7 +414,7 @@ header h1 {
 .subsection h3 {
   margin: 0 0 10px;
   font-size: 1rem;
-  color: #e2e8f0;
+  color: var(--text);
 }
 
 .forecast-grid {
@@ -403,7 +423,7 @@ header h1 {
 
 .model-used {
   margin: 0 0 10px;
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .metrics-row {
@@ -414,7 +434,7 @@ header h1 {
 
 .metric-pill {
   border: 1px solid var(--border);
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--tile-bg);
   border-radius: 999px;
   padding: 8px 12px;
 }
@@ -427,12 +447,7 @@ header h1 {
 
 .metric-pill strong {
   font-size: 0.86rem;
-  color: #e2e8f0;
-}
-
-.tv-chart-wrap {
-  width: 100%;
-  height: clamp(460px, 62vh, 760px);
+  color: var(--text);
 }
 
 .chart-wrap {
@@ -480,7 +495,7 @@ header h1 {
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--tile-bg);
 }
 
 .live-grid span {
@@ -492,7 +507,7 @@ header h1 {
 
 .live-grid strong {
   font-size: 0.98rem;
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .live-grid strong.up {
@@ -504,12 +519,12 @@ header h1 {
 }
 
 .live-grid strong.flat {
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .live-error {
   margin: 0 0 10px;
-  color: #fecaca;
+  color: #b91c1c;
   font-size: 0.9rem;
 }
 
@@ -552,8 +567,8 @@ header h1 {
 
 .logout-btn {
   border: 1px solid var(--border);
-  background: rgba(15, 23, 42, 0.6);
-  color: #e2e8f0;
+  background: var(--surface-solid);
+  color: var(--text);
   border-radius: 10px;
   padding: 8px 14px;
   font-weight: 700;
@@ -561,8 +576,23 @@ header h1 {
 }
 
 .logout-btn:hover {
-  border-color: rgba(248, 113, 113, 0.45);
-  color: #fecaca;
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #b91c1c;
+}
+
+.theme-toggle-btn {
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.theme-toggle-btn:hover {
+  border-color: rgba(14, 165, 233, 0.45);
+  color: var(--primary-dark);
 }
 
 .product-grid {
@@ -585,7 +615,7 @@ header h1 {
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.45);
+  background: var(--tile-bg);
 }
 
 .watchlist-row-main {
@@ -606,7 +636,7 @@ header h1 {
 }
 
 .watchlist-quote strong {
-  color: #e2e8f0;
+  color: var(--text);
   font-weight: 700;
 }
 
@@ -686,12 +716,12 @@ header h1 {
   margin: 14px 0 10px;
   font-size: clamp(1.4rem, 2.4vw, 2rem);
   line-height: 1.2;
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .auth-intro p {
   margin: 0;
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .auth-highlights {
@@ -702,7 +732,7 @@ header h1 {
 
 .auth-highlights div {
   border: 1px solid var(--border);
-  background: rgba(15, 23, 42, 0.45);
+  background: var(--tile-bg);
   border-radius: 12px;
   padding: 12px;
 }
@@ -711,11 +741,11 @@ header h1 {
   display: block;
   margin-bottom: 5px;
   font-size: 0.95rem;
-  color: #f1f5f9;
+  color: var(--text);
 }
 
 .auth-highlights span {
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 0.88rem;
 }
 
@@ -724,7 +754,7 @@ header h1 {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 6px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--tile-bg);
   border-radius: 12px;
   border: 1px solid var(--border);
 }
@@ -735,7 +765,7 @@ header h1 {
   padding: 10px;
   font-weight: 700;
   background: transparent;
-  color: #94a3b8;
+  color: var(--muted);
   cursor: pointer;
 }
 
@@ -748,12 +778,12 @@ header h1 {
 .auth-card-pro h3 {
   margin: 16px 0 6px;
   font-size: 1.35rem;
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .auth-muted {
   margin: 0 0 14px;
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -762,7 +792,7 @@ header h1 {
   gap: 6px;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #cbd5e1;
+  color: var(--muted);
 }
 
 .auth-form-pro input,
@@ -790,8 +820,8 @@ header h1 {
 
 .password-toggle {
   border: 1px solid var(--border);
-  background: rgba(30, 41, 59, 0.8);
-  color: #cbd5e1;
+  background: var(--surface-solid);
+  color: var(--text);
   font-weight: 700;
   border-radius: 10px;
   padding: 0 12px;
@@ -885,10 +915,6 @@ header h1 {
   .prediction-grid,
   .forecast-grid {
     grid-template-columns: 1fr;
-  }
-
-  .tv-chart-wrap {
-    height: 430px;
   }
 
   .chart-wrap,
