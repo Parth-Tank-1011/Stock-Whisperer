@@ -7,8 +7,9 @@ numpy>=1.26.0
 pandas>=2.2.0
 scikit-learn>=1.5.0
 yfinance>=0.2.44
-tensorflow>=2.16.0
 joblib>=1.4.0
+# Optional deep-learning stack (install only on supported Python versions/platforms)
+# tensorflow>=2.16.0
 
 # Product features (auth + persistence)
 sqlalchemy>=2.0.35

@@ -14,8 +14,16 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
-from tensorflow.keras.layers import GRU, LSTM, Dense, Dropout
-from tensorflow.keras.models import Sequential, load_model
+
+try:
+    from tensorflow.keras.layers import GRU, LSTM, Dense, Dropout
+    from tensorflow.keras.models import Sequential, load_model
+
+    HAS_TENSORFLOW = True
+except Exception:  # pragma: no cover - tensorflow may be unavailable on host Python
+    HAS_TENSORFLOW = False
+    GRU = LSTM = Dense = Dropout = Sequential = None  # type: ignore[assignment]
+    load_model = None  # type: ignore[assignment]
 
 from app.core.config import settings
 from app.core.exceptions import ModelTrainingError
@@ -129,6 +137,8 @@ class LSTMModelService:
 
     @staticmethod
     def _build_lstm_model(lookback: int, n_features: int, output_dim: int) -> Sequential:
+        if not HAS_TENSORFLOW:
+            raise ModelTrainingError("TensorFlow is not installed; deep models are unavailable on this host.")
         model = Sequential(
             [
                 LSTM(24, return_sequences=True, input_shape=(lookback, n_features)),
@@ -144,6 +154,8 @@ class LSTMModelService:
 
     @staticmethod
     def _build_gru_model(lookback: int, n_features: int, output_dim: int) -> Sequential:
+        if not HAS_TENSORFLOW:
+            raise ModelTrainingError("TensorFlow is not installed; deep models are unavailable on this host.")
         model = Sequential(
             [
                 GRU(24, return_sequences=True, input_shape=(lookback, n_features)),
@@ -264,7 +276,7 @@ class LSTMModelService:
         accuracy_by_model: Dict[str, float] = {}
         y_test_real = self._inverse_matrix(y_test, target_scaler)
 
-        if settings.enable_deep_models:
+        if settings.enable_deep_models and HAS_TENSORFLOW:
             lstm = self._build_lstm_model(settings.lookback_days, len(FEATURE_COLUMNS), len(PREDICTION_HORIZONS))
             lstm.fit(
                 x_train,
@@ -292,6 +304,8 @@ class LSTMModelService:
             rmse_by_model["gru"] = float(np.sqrt(np.mean((gru_pred_real[:, 0] - y_test_real[:, 0]) ** 2)))
             accuracy_by_model["gru"] = self._accuracy_percent_from_series(y_test_real[:, 0], gru_pred_real[:, 0])
             models["gru"] = gru
+        elif settings.enable_deep_models and not HAS_TENSORFLOW:
+            logger.warning("ENABLE_DEEP_MODELS is true but TensorFlow is unavailable; skipping LSTM/GRU models.")
 
         rf = RandomForestRegressor(
             n_estimators=300,
@@ -423,6 +437,8 @@ class LSTMModelService:
                 raise ModelTrainingError("Stored model file missing; retraining required")
 
             if name in DEEP_MODELS:
+                if not HAS_TENSORFLOW or load_model is None:
+                    raise ModelTrainingError("Stored deep model requires TensorFlow, which is unavailable on this host.")
                 models[name] = load_model(path, compile=False)
             else:
                 models[name] = joblib.load(path)
