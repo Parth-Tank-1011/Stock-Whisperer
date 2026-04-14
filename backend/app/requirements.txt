@@ -1,0 +1,19 @@
+# FastAPI backend dependencies
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# Data and model stack
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.5.0
+yfinance>=0.2.44
+tensorflow>=2.16.0
+joblib>=1.4.0
+
+# Product features (auth + persistence)
+sqlalchemy>=2.0.35
+python-jose[cryptography]>=3.3.0
+passlib>=1.7.4
+
+# Optional: enable advanced benchmark model
+# xgboost>=2.1.0
