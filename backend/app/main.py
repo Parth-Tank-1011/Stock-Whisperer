@@ -95,7 +95,16 @@ async def input_validation_handler(_: Request, exc: InputValidationError) -> JSO
 
 @app.exception_handler(RequestValidationError)
 async def request_validation_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
-    return JSONResponse(status_code=422, content={"detail": "Invalid request", "errors": exc.errors()})
+    errors = exc.errors()
+    detail = "Invalid request"
+    if errors:
+        first = errors[0]
+        loc = first.get("loc") or []
+        field = loc[-1] if loc else "field"
+        msg = first.get("msg") or "Invalid value"
+        detail = f"{field}: {msg}"
+
+    return JSONResponse(status_code=422, content={"detail": detail, "errors": errors})
 
 
 @app.exception_handler(InvalidStockSymbolError)

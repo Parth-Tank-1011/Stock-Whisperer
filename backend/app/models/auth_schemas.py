@@ -12,7 +12,8 @@ from app.utils.symbols import STOCK_SYMBOL_PATTERN
 
 
 class SignupRequest(BaseModel):
-    username: str = Field(..., min_length=3, max_length=64, pattern=r"^[A-Za-z0-9_]+$")
+    # Accept broader username input to avoid hard failures when users enter an email-like handle.
+    username: str = Field(..., min_length=3, max_length=64)
     email: str = Field(..., min_length=5, max_length=128, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
     password: str = Field(..., min_length=8, max_length=128)
 
