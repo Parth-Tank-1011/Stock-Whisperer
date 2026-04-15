@@ -6,7 +6,9 @@ function resolveApiBaseUrl() {
     return String(fromEnv).trim();
   }
   // Production bundle served from FastAPI: same-origin. Dev: Vite on 5173 → backend 8000.
-  return import.meta.env.PROD ? "" : "http://127.0.0.1:8000";
+  return import.meta.env.PROD
+    ? "https://stock-whisperer-1.onrender.com"
+    : "http://127.0.0.1:8000";
 }
 
 const api = axios.create({

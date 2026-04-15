@@ -33,16 +33,29 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.app_name, version=settings.app_version)
 
-origins = [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
-if origins == ["*"]:
-    allow_origins = ["*"]
-else:
-    allow_origins = origins
+
+def _resolve_cors_origins() -> tuple[list[str], bool]:
+    raw_origins = [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
+    frontend_url = os.getenv("FRONTEND_URL", "").strip()
+    if frontend_url and frontend_url not in raw_origins:
+        raw_origins.append(frontend_url)
+
+    if not raw_origins:
+        return ["http://127.0.0.1:5173"], True
+
+    if raw_origins == ["*"]:
+        # Browsers reject wildcard origins when credentials are allowed.
+        return ["*"], False
+
+    return raw_origins, True
+
+
+allow_origins, allow_credentials = _resolve_cors_origins()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -118,6 +118,15 @@ Open `http://localhost:8000` for the UI; `http://localhost:8000/docs` for OpenAP
 
 **Split hosting:** deploy the API container only, build the frontend with `VITE_API_BASE_URL=https://your-api.example.com`, and host `frontend/dist` on any static host (S3, Netlify, etc.).
 
+For this project deployment:
+- Frontend: `https://stock-whisperer-sigma.vercel.app/`
+- Backend: `https://stock-whisperer-1.onrender.com/`
+
+Set these variables:
+- Vercel (Frontend): `VITE_API_BASE_URL=https://stock-whisperer-1.onrender.com`
+- Render (Backend): `CORS_ORIGINS=https://stock-whisperer-sigma.vercel.app`
+- Render (Backend, optional): `FRONTEND_URL=https://stock-whisperer-sigma.vercel.app`
+
 ## Product Features API (Auth, Watchlist, Alerts)
 
 ### Auth
@@ -174,4 +183,3 @@ Open `http://localhost:8000` for the UI; `http://localhost:8000/docs` for OpenAP
 - `sentiment_score`: range `-1` to `1`
 - `suggestion`: `BUY` / `SELL` / `HOLD`
 - `headlines_analyzed`: number of headlines used
-
