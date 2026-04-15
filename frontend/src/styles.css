@@ -355,6 +355,28 @@ header h1 {
   font-size: 0.9rem;
 }
 
+.symbol-picks {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.symbol-pick-btn {
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--primary);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.symbol-pick-btn:hover {
+  background: rgba(34, 211, 238, 0.15);
+}
+
 .error-banner {
   background: rgba(220, 38, 38, 0.08);
   color: #b91c1c;

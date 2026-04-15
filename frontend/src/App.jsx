@@ -8,6 +8,27 @@ import IndicatorsChart from "./components/IndicatorsChart";
 import WatchlistPanel from "./components/WatchlistPanel";
 import AlertsPanel from "./components/AlertsPanel";
 
+const POPULAR_SYMBOLS = [
+  "RELIANCE.NS",
+  "TCS.NS",
+  "INFY.NS",
+  "HDFCBANK.NS",
+  "ICICIBANK.NS",
+  "SBIN.NS",
+  "LT.NS",
+  "ITC.NS",
+  "BHARTIARTL.NS",
+  "KOTAKBANK.NS",
+  "HINDUNILVR.NS",
+  "BAJFINANCE.NS",
+  "AXISBANK.NS",
+  "ASIANPAINT.NS",
+  "MARUTI.NS",
+  "TITAN.NS",
+  "SUNPHARMA.NS",
+  "ULTRACEMCO.NS"
+];
+
 function scrollToSection(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -147,6 +168,7 @@ export default function App() {
             onSymbolChange={setSymbol}
             onSubmit={handleSubmit}
             loading={loading}
+            quickSymbols={POPULAR_SYMBOLS}
           />
         </section>
 
