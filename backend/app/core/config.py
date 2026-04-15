@@ -31,6 +31,18 @@ def _env_bool(name: str, default: bool) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _default_database_url() -> str:
+    explicit = os.getenv("DATABASE_URL")
+    if explicit:
+        return explicit
+
+    # Render persistent disk path; keeps users across restarts/redeploys when disk is attached.
+    if os.getenv("APP_ENV", "development").lower() == "production" and os.path.isdir("/var/data"):
+        return "sqlite:////var/data/stock_whisperer.db"
+
+    return "sqlite:///./storage/app.db"
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = os.getenv("APP_NAME", "Stock Whisperer API")
@@ -61,7 +73,7 @@ class Settings:
     enable_xgboost: bool = _env_bool("ENABLE_XGBOOST", False)
     enable_deep_models: bool = _env_bool("ENABLE_DEEP_MODELS", False)
 
-    database_url: str = os.getenv("DATABASE_URL", "sqlite:///./storage/app.db")
+    database_url: str = _default_database_url()
     jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "change-this-in-production")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
     access_token_expire_minutes: int = _env_int("ACCESS_TOKEN_EXPIRE_MINUTES", 60)

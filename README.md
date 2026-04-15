@@ -126,6 +126,7 @@ Set these variables:
 - Vercel (Frontend): `VITE_API_BASE_URL=https://stock-whisperer-1.onrender.com`
 - Render (Backend): `CORS_ORIGINS=https://stock-whisperer-sigma.vercel.app`
 - Render (Backend, optional): `FRONTEND_URL=https://stock-whisperer-sigma.vercel.app`
+- Render (Backend persistence): attach a persistent disk and set `DATABASE_URL=sqlite:////var/data/stock_whisperer.db` (or use Postgres)
 
 ## Product Features API (Auth, Watchlist, Alerts)
 

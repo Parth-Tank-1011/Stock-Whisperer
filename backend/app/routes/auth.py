@@ -62,8 +62,14 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> AuthTokenResp
         .first()
     )
 
-    if user is None or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Account not found. Sign up first, or verify your backend database persistence.",
+        )
+
+    if not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect password")
 
     access_token = create_access_token(subject=user.username)
     return AuthTokenResponse(access_token=access_token)
