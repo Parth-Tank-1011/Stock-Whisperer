@@ -128,6 +128,12 @@ Set these variables:
 - Render (Backend, optional): `FRONTEND_URL=https://stock-whisperer-sigma.vercel.app`
 - Render (Backend persistence): attach a persistent disk and set `DATABASE_URL=sqlite:////var/data/stock_whisperer.db` (or use Postgres)
 
+Supabase/Postgres setup (recommended):
+- Create a Supabase project and copy the connection string.
+- In Render backend env, set `DATABASE_URL` to your Supabase string with `sslmode=require`.
+- This backend auto-normalizes `postgres://` and `postgresql://` to the SQLAlchemy psycopg format.
+- Redeploy backend, then create a new user once (tables are auto-created on startup).
+
 ## Product Features API (Auth, Watchlist, Alerts)
 
 ### Auth

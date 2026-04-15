@@ -13,6 +13,7 @@ joblib>=1.4.0
 
 # Product features (auth + persistence)
 sqlalchemy>=2.0.35
+psycopg[binary]>=3.2.0
 python-jose[cryptography]>=3.3.0
 passlib>=1.7.4
 

@@ -43,6 +43,16 @@ def _default_database_url() -> str:
     return "sqlite:///./storage/app.db"
 
 
+def _normalize_database_url(url: str) -> str:
+    normalized = url.strip()
+    # Supabase/Render often provide postgres://... which SQLAlchemy may not parse reliably.
+    if normalized.startswith("postgres://"):
+        return "postgresql+psycopg://" + normalized[len("postgres://") :]
+    if normalized.startswith("postgresql://"):
+        return "postgresql+psycopg://" + normalized[len("postgresql://") :]
+    return normalized
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = os.getenv("APP_NAME", "Stock Whisperer API")
@@ -73,7 +83,7 @@ class Settings:
     enable_xgboost: bool = _env_bool("ENABLE_XGBOOST", False)
     enable_deep_models: bool = _env_bool("ENABLE_DEEP_MODELS", False)
 
-    database_url: str = _default_database_url()
+    database_url: str = _normalize_database_url(_default_database_url())
     jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "change-this-in-production")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
     access_token_expire_minutes: int = _env_int("ACCESS_TOKEN_EXPIRE_MINUTES", 60)
