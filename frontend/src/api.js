@@ -16,14 +16,6 @@ const api = axios.create({
   timeout: 30000
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("auth_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 export async function fetchHistorical(symbol) {
   const response = await api.get(`/stock/${encodeURIComponent(symbol)}`);
   return response.data;
@@ -36,21 +28,6 @@ export async function fetchLivePrice(symbol) {
 
 export async function fetchPrediction(symbol) {
   const response = await api.get(`/predict/${encodeURIComponent(symbol)}`);
-  return response.data;
-}
-
-export async function signup(payload) {
-  const response = await api.post("/auth/signup", payload);
-  return response.data;
-}
-
-export async function login(payload) {
-  const response = await api.post("/auth/login", payload);
-  return response.data;
-}
-
-export async function fetchMe() {
-  const response = await api.get("/auth/me");
   return response.data;
 }
 

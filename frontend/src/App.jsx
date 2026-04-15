@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchHistorical, fetchMe, fetchPrediction } from "./api";
+import React, { useEffect, useMemo, useState } from "react";
+import { fetchHistorical, fetchPrediction } from "./api";
 import SymbolForm from "./components/SymbolForm";
 import PredictionCard from "./components/PredictionCard";
 import LiveTicker from "./components/LiveTicker";
 import PredictionOverlayChart from "./components/PredictionOverlayChart";
 import IndicatorsChart from "./components/IndicatorsChart";
-import AuthPanel from "./components/AuthPanel";
 import WatchlistPanel from "./components/WatchlistPanel";
 import AlertsPanel from "./components/AlertsPanel";
 
@@ -55,8 +54,6 @@ export default function App() {
   const [error, setError] = useState("");
   const [history, setHistory] = useState([]);
   const [prediction, setPrediction] = useState(null);
-  const [user, setUser] = useState(null);
-  const [authChecked, setAuthChecked] = useState(false);
   const [navActive, setNavActive] = useState("command");
   const [theme, setTheme] = useState(() => localStorage.getItem("sw_theme") || "light");
 
@@ -71,29 +68,6 @@ export default function App() {
     }
     return history[history.length - 1].close;
   }, [history]);
-
-  const loadProfile = useCallback(async () => {
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      setUser(null);
-      setAuthChecked(true);
-      return;
-    }
-
-    try {
-      const me = await fetchMe();
-      setUser(me);
-    } catch {
-      localStorage.removeItem("auth_token");
-      setUser(null);
-    } finally {
-      setAuthChecked(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -115,7 +89,10 @@ export default function App() {
       setPrediction(predictionData);
       setSymbol(normalized);
     } catch (err) {
-      const message = err?.response?.data?.detail || err?.message || "Request failed. Please try a valid stock symbol.";
+      const message =
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Request failed. Please try a valid stock symbol.";
       setError(message);
       setPrediction(null);
       setHistory([]);
@@ -124,50 +101,8 @@ export default function App() {
     }
   }
 
-  function logout() {
-    localStorage.removeItem("auth_token");
-    setUser(null);
-  }
-
   function toggleTheme() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  }
-
-  if (!authChecked) {
-    return (
-      <div className="sw-root">
-        <div className="sw-main" style={{ maxWidth: 560, margin: "0 auto", justifyContent: "center" }}>
-          <section className="chart-card">Checking session…</section>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="sw-root">
-        <aside className="sw-sidebar">
-          <SidebarBrand />
-          <div className="sw-sidebar-footer">
-            <span className="sw-chip">Secure workspace</span>
-            <button type="button" className="theme-toggle-btn" onClick={toggleTheme}>
-              {theme === "light" ? "Night" : "Light"}
-            </button>
-            <p style={{ margin: "12px 0 0", fontSize: "0.82rem", color: "var(--muted)" }}>
-              Sign in to sync watchlists, alerts, and saved preferences.
-            </p>
-          </div>
-        </aside>
-        <div className="sw-main">
-          <header>
-            <p className="kicker">NSE · BSE</p>
-            <h1>Welcome to Stock Whisperer</h1>
-            <p className="subtitle">Login or create an account for watchlist, price alerts, and ML forecasts.</p>
-          </header>
-          <AuthPanel onAuthenticated={loadProfile} />
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -176,8 +111,8 @@ export default function App() {
         <SidebarBrand />
         <SidebarNav active={navActive} onSelect={setNavActive} />
         <div className="sw-sidebar-footer">
-          <strong>{user.username}</strong>
-          <span className="sw-pill">Session active</span>
+          <strong>Guest Mode</strong>
+          <span className="sw-pill">No login required</span>
         </div>
       </aside>
 
@@ -185,12 +120,9 @@ export default function App() {
         <div className="sw-topbar">
           <h1>Markets desk</h1>
           <div className="sw-top-actions">
-            <span className="sw-pill">Signed in</span>
+            <span className="sw-pill">Open access</span>
             <button type="button" className="theme-toggle-btn" onClick={toggleTheme}>
               {theme === "light" ? "Night" : "Light"}
-            </button>
-            <button type="button" className="logout-btn" onClick={logout}>
-              Logout
             </button>
           </div>
         </div>

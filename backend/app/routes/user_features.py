@@ -27,7 +27,6 @@ from app.models.auth_schemas import (
     WatchlistQuotesResponse,
 )
 from app.models.schemas import LivePriceResponse
-from app.services.auth_service import get_current_user
 from app.services.yahoo_service import YahooFinanceService
 from app.utils.symbols import STOCK_SYMBOL_PATTERN, normalize_symbol
 
@@ -49,10 +48,31 @@ live_cache = TTLCache(ttl_seconds=settings.live_cache_ttl_seconds)
 yahoo_live_service = YahooFinanceService(cache=live_cache)
 
 
+def get_guest_user(db: Session = Depends(get_db)) -> User:
+    """Return a shared guest user so watchlist/alerts work without auth."""
+
+    guest_username = "guest"
+    guest_email = "guest@stockwhisperer.local"
+
+    user = db.query(User).filter(User.username == guest_username).first()
+    if user is not None:
+        return user
+
+    user = User(
+        username=guest_username,
+        email=guest_email,
+        password_hash="disabled",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 @router.get("/watchlist", response_model=WatchlistListResponse)
 def list_watchlist(
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> WatchlistListResponse:
     items = (
         db.query(WatchlistItem)
@@ -72,7 +92,7 @@ def list_watchlist(
 @router.get("/watchlist/quotes", response_model=WatchlistQuotesResponse)
 def watchlist_live_quotes(
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> WatchlistQuotesResponse:
     """Return the latest live quote for each watchlist symbol (best-effort per row)."""
 
@@ -102,7 +122,7 @@ def watchlist_live_quotes(
 def add_watchlist_item(
     payload: WatchlistAddRequest,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> WatchlistItemResponse:
     symbol = normalize_symbol(payload.symbol)
 
@@ -126,7 +146,7 @@ def add_watchlist_item(
 def remove_watchlist_item(
     symbol: SymbolPath,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> dict:
     normalized = normalize_symbol(symbol)
     item = (
@@ -145,7 +165,7 @@ def remove_watchlist_item(
 @router.get("/alerts", response_model=AlertListResponse)
 def list_alerts(
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> AlertListResponse:
     alerts = (
         db.query(Alert)
@@ -175,7 +195,7 @@ def list_alerts(
 def create_alert(
     payload: AlertCreateRequest,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> AlertResponse:
     symbol = normalize_symbol(payload.symbol)
 
@@ -206,7 +226,7 @@ def create_alert(
 def delete_alert(
     alert_id: int,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> dict:
     alert = db.query(Alert).filter(Alert.id == alert_id, Alert.user_id == user.id).first()
     if alert is None:
@@ -220,7 +240,7 @@ def delete_alert(
 @router.post("/alerts/check", response_model=AlertCheckResponse)
 def check_alerts(
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_guest_user),
 ) -> AlertCheckResponse:
     active_alerts = (
         db.query(Alert)

@@ -21,7 +21,6 @@ from app.core.exceptions import (
 )
 from app.core.logging_config import configure_logging
 from app.db.database import init_db
-from app.routes.auth import router as auth_router
 from app.routes.stock import router as stock_router
 from app.routes.user_features import router as user_features_router
 from app.utils.middleware import RateLimitMiddleware, RequestLoggingMiddleware
@@ -129,7 +128,6 @@ async def generic_handler(_: Request, exc: Exception) -> JSONResponse:
 
 
 app.include_router(stock_router)
-app.include_router(auth_router)
 app.include_router(user_features_router)
 
 
