@@ -10,25 +10,62 @@ export default function AuthPanel({ onAuthenticated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  function getApiErrorMessage(err) {
+    if (err?.code === "ERR_NETWORK") {
+      return "Backend is not reachable. Please try again in a moment.";
+    }
+
+    const responseData = err?.response?.data;
+    if (!responseData) {
+      return "Authentication failed";
+    }
+
+    if (typeof responseData.detail === "string") {
+      return responseData.detail;
+    }
+
+    if (Array.isArray(responseData.errors) && responseData.errors.length > 0) {
+      const first = responseData.errors[0];
+      const field = Array.isArray(first?.loc) ? first.loc[first.loc.length - 1] : "field";
+      if (field === "username" && String(first?.msg || "").toLowerCase().includes("pattern")) {
+        return "Username can use letters, numbers, and underscore only.";
+      }
+      if (field === "password" && String(first?.msg || "").toLowerCase().includes("least")) {
+        return "Password must be at least 8 characters.";
+      }
+      return `${field}: ${first?.msg || "Invalid value"}`;
+    }
+
+    return "Authentication failed";
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     setError("");
 
     try {
+      const normalizedUsername = username.trim();
+      const normalizedEmail = email.trim();
+      const normalizedPassword = password;
+
       if (mode === "signup") {
-        await signup({ username, email, password });
+        if (normalizedUsername.includes("@")) {
+          setError("Use a username in the first field. Put your email in the Email field.");
+          return;
+        }
+        await signup({
+          username: normalizedUsername,
+          email: normalizedEmail,
+          password: normalizedPassword
+        });
       }
 
-      const auth = await login({ username, password });
+      const auth = await login({ username: normalizedUsername, password: normalizedPassword });
       localStorage.setItem("auth_token", auth.access_token);
       onAuthenticated?.();
     } catch (err) {
-      if (err?.code === "ERR_NETWORK") {
-        setError("Backend is not running. Start FastAPI server on port 8000 and try again.");
-      } else {
-        setError(err?.response?.data?.detail || "Authentication failed");
-      }
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -87,12 +124,12 @@ export default function AuthPanel({ onAuthenticated }) {
 
         <form onSubmit={handleSubmit} className="auth-form auth-form-pro">
           <label>
-            Username or Email
+            {mode === "login" ? "Username or Email" : "Username"}
             <input
               type="text"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="e.g. parth01 or parth@example.com"
+              placeholder={mode === "login" ? "e.g. parth01 or parth@example.com" : "e.g. parth01"}
               required
             />
           </label>
