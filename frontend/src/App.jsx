@@ -110,10 +110,11 @@ export default function App() {
       setPrediction(predictionData);
       setSymbol(normalized);
     } catch (err) {
-      const message =
-        err?.response?.data?.detail ||
-        err?.message ||
-        "Request failed. Please try a valid stock symbol.";
+      const message = err?.code === "ECONNABORTED"
+        ? "Prediction is taking longer than expected. Please retry in a few seconds."
+        : err?.response?.data?.detail ||
+          err?.message ||
+          "Request failed. Please try a valid stock symbol.";
       setError(message);
       setPrediction(null);
       setHistory([]);

@@ -13,7 +13,7 @@ function resolveApiBaseUrl() {
 
 const api = axios.create({
   baseURL: resolveApiBaseUrl(),
-  timeout: 30000
+  timeout: 120000
 });
 
 export async function fetchHistorical(symbol) {
@@ -27,7 +27,9 @@ export async function fetchLivePrice(symbol) {
 }
 
 export async function fetchPrediction(symbol) {
-  const response = await api.get(`/predict/${encodeURIComponent(symbol)}`);
+  const response = await api.get(`/predict/${encodeURIComponent(symbol)}`, {
+    timeout: 180000
+  });
   return response.data;
 }
 
