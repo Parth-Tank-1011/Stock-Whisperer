@@ -88,12 +88,53 @@ class YahooFinanceService:
             if attempt <= retries:
                 self._retry_sleep(attempt)
 
+        # Fallback path: yfinance.download can intermittently return an empty frame.
+        # Ticker.history often succeeds for the same symbol/time range.
+        if df.empty:
+            for attempt in range(1, retries + 2):
+                try:
+                    ticker = yf.Ticker(normalized_symbol)
+                    df = ticker.history(
+                        period=period,
+                        interval=interval,
+                        auto_adjust=False,
+                        actions=False,
+                    )
+                    if not df.empty:
+                        break
+                except Exception as exc:  # pragma: no cover
+                    last_exception = exc
+                    logger.warning(
+                        "Historical fallback attempt %s failed for %s",
+                        attempt,
+                        normalized_symbol,
+                        exc_info=True,
+                    )
+                if attempt <= retries:
+                    self._retry_sleep(attempt)
+
         if df.empty and last_exception is not None:
             raise DataFetchError("Unable to fetch stock data from Yahoo Finance") from last_exception
 
-        if df.empty or "Close" not in df.columns:
-            if isinstance(df.columns, pd.MultiIndex):
-                df.columns = df.columns.get_level_values(0)
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+
+        if not df.empty:
+            rename_map: dict[str, str] = {}
+            for column in df.columns:
+                key = str(column).strip().lower()
+                if key == "open":
+                    rename_map[column] = "Open"
+                elif key == "high":
+                    rename_map[column] = "High"
+                elif key == "low":
+                    rename_map[column] = "Low"
+                elif key == "close":
+                    rename_map[column] = "Close"
+                elif key == "volume":
+                    rename_map[column] = "Volume"
+            if rename_map:
+                df = df.rename(columns=rename_map)
 
         if df.empty or "Close" not in df.columns:
             raise InvalidStockSymbolError(
